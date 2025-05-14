@@ -1,0 +1,67 @@
+### Build ###
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+build/
+!**/src/main/**/build/  # Keep build results in source folders
+!**/src/test/**/build/
+
+# Gradle
+.gradle/
+
+### IDEs ###
+# IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+.factorypath
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### System ###
+.DS_Store
+Thumbs.db
+
+### Logs ###
+*.log
+logs/
+
+### Database ###
+# Local database files
+*.db
+*.sql
+*.h2.db
+
+### Configuration ###
+# Sensitive files (create template versions instead)
+hibernate.cfg.xml
+application.properties
+application.yml
+*.env
+.env.local
+.env.development
+.env.test
+
+# Exceptions (keep these build-related files)
+!.mvn/wrapper/maven-wrapper.jar

@@ -6,6 +6,9 @@ import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
@@ -14,6 +17,7 @@ public class Main {
             // 1. Set up hibernate
             SessionFactory sessionFactory = new Configuration()
                     .addAnnotatedClass(Student.class)
+                    .addAnnotatedClass(Laptop.class)
                     .configure("hibernate.cfg.xml")
                     .buildSessionFactory();
 
@@ -30,41 +34,72 @@ public class Main {
             // Begin transaction
             session.beginTransaction();
 
-            // Create student object
-            Student student = new Student();
-            student.setName("Tutu Tuts");
-            student.setGrade(60);
+            // Create Laptop object
+            Laptop lap1 = new Laptop();
+            lap1.setBrand("Apple Macbook Pro");
+            lap1.setRam(32);
 
-           // Save the student
+
+            Laptop lap2 = new Laptop();
+            lap2.setBrand("Dell XPS");
+            lap2.setRam(16);
+
+
+            // Create Address object
+            Address add1 = new Address();
+            add1.setStreet("110 Wilkinson Road");
+            add1.setCity("Freetown");
+
+            // Create Student object
+            Student student = new Student();
+            student.setName("Mickey Singh");
+            student.setGrade(90);
+            student.setAddress(add1);
+            student.setLaptops(Arrays.asList(lap1, lap2));
+
+            lap1.setStudent(student);
+            lap2.setStudent(student);
+
+           // Save the laptop & student
+           session.persist(lap1);
+           session.persist(lap2);
            session.persist(student);
            logger.info("Student saved successfully with ID: {}", student.getId());
 
-            // Load or Get the student by ID
-            Student stud1 = session.get(Student.class, 5);
+           // Load or Get the student by ID
+            Student stud = session.get(Student.class, 1);
+            logger.info("Student retrieved successfully : {}", stud); // display student
 
-            if (stud1 != null) {
-                stud1.setName("Marish Jay");  // Modify data
-                stud1.setGrade(88);
 
-                // Merge (update) the student
-                Student updatedStudent = session.merge(stud1);
-                logger.info("Updated Student: {}", updatedStudent);
-            } else {
-                logger.info("Student not found!");
-            }
-
-            // Load or Get the student by ID
-            Student stud2 = session.get(Student.class, 8);
-
-            if (stud2 != null) {
-                session.remove(stud2);  // Delete the student
-                logger.info("Deleted Student: {}", stud2);
-            } else {
-                logger.info("Student not found!");
-            }
 
             // Commit transaction
             session.getTransaction().commit();
+
+            // Using HQL to read specific student data
+            List<Object[]> studentData = session.createQuery(
+                            "select s.name, s.Address.city from Student s", Object[].class)  // Note: Student.class changed to Object[].class
+                    .list();
+
+            for (Object[] row : studentData) {
+                System.out.println("Name: " + row[0] + ", City: " + row[1]);
+            }
+
+            // Using HQL to read specific student data
+            List<Object[]> studentData2 = session.createQuery(
+                            "select s.name, s.Address.city, l.brand " +
+                                    "from Student s " +
+                                    "join s.Laptops l", Object[].class)  // Note lowercase 'l' in 's.laptops'
+                    .list();
+
+            for (Object[] row : studentData2) {
+                System.out.println("Name: " + row[0] + ", City: " + row[1] + ", Laptop: " + row[2]);
+            }
+
+
+
+
+
+
 
         }catch (Exception e) {
             logger.error("Error in Hibernate operation", e);

@@ -32,20 +32,40 @@ public class Main {
 
             // Create student object
             Student student = new Student();
-            student.setName("Amish Karnani");
-            student.setGrade(85);
+            student.setName("Tutu Tuts");
+            student.setGrade(60);
 
-            // Save the student
-            session.persist(student);
+           // Save the student
+           session.persist(student);
+           logger.info("Student saved successfully with ID: {}", student.getId());
+
+            // Load or Get the student by ID
+            Student stud1 = session.get(Student.class, 5);
+
+            if (stud1 != null) {
+                stud1.setName("Marish Jay");  // Modify data
+                stud1.setGrade(88);
+
+                // Merge (update) the student
+                Student updatedStudent = session.merge(stud1);
+                logger.info("Updated Student: {}", updatedStudent);
+            } else {
+                logger.info("Student not found!");
+            }
+
+            // Load or Get the student by ID
+            Student stud2 = session.get(Student.class, 8);
+
+            if (stud2 != null) {
+                session.remove(stud2);  // Delete the student
+                logger.info("Deleted Student: {}", stud2);
+            } else {
+                logger.info("Student not found!");
+            }
 
             // Commit transaction
             session.getTransaction().commit();
 
-            logger.info("Student saved successfully with ID: {}", student.getId());
-
-            // Retrieve and display the saved student
-            Student savedStudent = session.get(Student.class, student.getId());
-            logger.info("Retrieved student: {}", savedStudent);
         }catch (Exception e) {
             logger.error("Error in Hibernate operation", e);
         } finally {
